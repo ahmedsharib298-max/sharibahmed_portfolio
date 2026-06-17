@@ -14,6 +14,7 @@ export interface VideoIntroProps {
   subtitle?: string;
   /** id of the section to scroll to when the scroll indicator is clicked */
   nextSectionId?: string;
+  activeTheme?: "ember" | "cyber" | "plasma" | "void";
 }
 
 function PlayIcon() {
@@ -55,6 +56,7 @@ export default function VideoIntro({
   eyebrow = "Full-Stack Developer",
   subtitle = "Building full-stack web apps and data-driven dashboards — turning code and analytics into real-world impact.",
   nextSectionId = "next-section",
+  activeTheme = "ember",
 }: VideoIntroProps) {
   const heroRef = useRef<HTMLElement>(null);
   const curtainRef = useRef<HTMLDivElement>(null);
@@ -245,7 +247,7 @@ export default function VideoIntro({
 
       <div className={styles.ambientOverlay} />
 
-      <CinematicLayer />
+      <CinematicLayer activeTheme={activeTheme} />
 
       <div className={styles.hud} ref={hudRef} style={{ opacity: hasEntered ? undefined : 0 }}>
         <span className={styles.recDot} />

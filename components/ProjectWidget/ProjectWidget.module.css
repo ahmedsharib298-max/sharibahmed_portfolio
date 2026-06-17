@@ -293,9 +293,14 @@
   font-weight: bold;
 }
 
+@keyframes growBar {
+  from { height: 0; y: 150; }
+}
+
 .svgBar {
-  transition: height 0.5s ease, y 0.5s ease;
+  transition: height 0.5s cubic-bezier(0.16, 1, 0.3, 1), y 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
+  animation: growBar 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .svgBar:hover {
@@ -329,4 +334,18 @@
 
 .refreshBtn:hover svg {
   transform: rotate(180deg);
+}
+
+@media (max-width: 420px) {
+  .widgetContainer {
+    padding: 1rem !important;
+  }
+  .otpInputContainer {
+    gap: 0.25rem !important;
+  }
+  .dashHeader {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.35rem !important;
+  }
 }

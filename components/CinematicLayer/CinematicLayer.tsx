@@ -51,7 +51,11 @@ interface Particle {
   ampY: number;
 }
 
-export default function CinematicLayer() {
+interface CinematicLayerProps {
+  activeTheme?: "ember" | "cyber" | "plasma" | "void";
+}
+
+export default function CinematicLayer({ activeTheme = "ember" }: CinematicLayerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -89,9 +93,17 @@ export default function CinematicLayer() {
     const sizes = new Float32Array(PARTICLE_COUNT);
     const particles: Particle[] = [];
 
-    const warm = new THREE.Color("#ff9a5c");
-    const warmDeep = new THREE.Color("#ff7a3c");
-    const cool = new THREE.Color("#8fd0ff");
+    const themeColors = {
+      ember: { warm: "#ff9a5c", warmDeep: "#ff7a3c", cool: "#8fd0ff" },
+      cyber: { warm: "#a3ff7d", warmDeep: "#39ff14", cool: "#8ffff9" },
+      plasma: { warm: "#ff80bf", warmDeep: "#ff007f", cool: "#ffea80" },
+      void: { warm: "#80f9ff", warmDeep: "#00f2fe", cool: "#ff80b3" },
+    };
+    const activeColors = themeColors[activeTheme] || themeColors.ember;
+
+    const warm = new THREE.Color(activeColors.warm);
+    const warmDeep = new THREE.Color(activeColors.warmDeep);
+    const cool = new THREE.Color(activeColors.cool);
 
     for (let i = 0; i < PARTICLE_COUNT; i++) {
       const baseX = (Math.random() - 0.5) * 80;
@@ -225,7 +237,7 @@ export default function CinematicLayer() {
         container.removeChild(renderer.domElement);
       }
     };
-  }, []);
+  }, [activeTheme]);
 
   return (
     <div

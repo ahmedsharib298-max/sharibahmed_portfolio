@@ -1,15 +1,59 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import VideoIntro from "../components/VideoIntro/VideoIntro";
 import ScrollReveal from "../components/ScrollReveal/ScrollReveal";
 import { StudentRegistrationWidget, AcademicPerformanceWidget } from "../components/ProjectWidget/ProjectWidget";
+import Tilt from "../components/Tilt/Tilt";
+import ThemeSwitcher, { ThemeType } from "../components/ThemeSwitcher/ThemeSwitcher";
+import TerminalConsole from "../components/TerminalConsole/TerminalConsole";
 import styles from "./page.module.css";
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [activeTheme, setActiveTheme] = useState<ThemeType>("ember");
+  const [timelineProgress, setTimelineProgress] = useState(0);
+  const timelineRef = useRef<HTMLDivElement>(null);
 
   const closeMenu = () => setMenuOpen(false);
+
+  const themeValues = {
+    ember: { "--ember": "#ff7a3c", "--ember-deep": "#b8431d", "--monitor-blue": "#4fa8e0" },
+    cyber: { "--ember": "#39ff14", "--ember-deep": "#097969", "--monitor-blue": "#00e5ff" },
+    plasma: { "--ember": "#ff007f", "--ember-deep": "#7b2cbf", "--monitor-blue": "#ffcc00" },
+    void: { "--ember": "#00f2fe", "--ember-deep": "#1d2786", "--monitor-blue": "#ff0055" },
+  };
+
+  const handleThemeChange = (theme: ThemeType) => {
+    setActiveTheme(theme);
+    const vals = themeValues[theme];
+    Object.entries(vals).forEach(([key, val]) => {
+      document.documentElement.style.setProperty(key, val);
+    });
+  };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const el = timelineRef.current;
+      if (!el) return;
+
+      const rect = el.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      
+      const startY = windowHeight * 0.75;
+      const endY = windowHeight * 0.25;
+      const totalHeight = rect.height;
+      const progressDist = startY - rect.top;
+      
+      let pct = (progressDist / (totalHeight + (startY - endY))) * 100;
+      pct = Math.max(0, Math.min(100, pct));
+      setTimelineProgress(pct);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <main style={{ position: "relative" }}>
@@ -69,6 +113,7 @@ export default function Home() {
         eyebrow="Computer Applications Graduate & Analyst"
         subtitle="Turning complex databases and full-stack logic into premium, data-driven web solutions."
         nextSectionId="about"
+        activeTheme={activeTheme}
       />
 
       {/* Reserves the viewport height the fixed hero occupies */}
@@ -86,7 +131,7 @@ export default function Home() {
             </div>
             <hr className={styles.sectionDivider} />
           </ScrollReveal>
-          <ScrollReveal delay={150}>
+          <ScrollReveal delay={150} direction="zoom">
             <div className={styles.aboutConsole}>
               <div className={styles.consoleHeader}>
                 <span className={styles.consoleDot} />
@@ -105,6 +150,8 @@ export default function Home() {
                 </p>
               </div>
             </div>
+            
+            <TerminalConsole />
           </ScrollReveal>
         </div>
 
@@ -118,8 +165,8 @@ export default function Home() {
             <hr className={styles.sectionDivider} />
           </ScrollReveal>
           <div className={styles.skillsGrid}>
-            <ScrollReveal delay={0}>
-              <div className={`${styles.skillCard} ${styles.skillCardEmber}`}>
+            <ScrollReveal delay={0} direction="zoom">
+              <Tilt className={`${styles.skillCard} ${styles.skillCardEmber}`} scale={1.03} maxRotation={6}>
                 <div className={styles.skillCardHeader}>
                   <span className={styles.skillIcon}>⚡</span> Languages &amp; Markup
                 </div>
@@ -130,11 +177,11 @@ export default function Home() {
                   <span className={styles.skillBadge}>CSS3</span>
                   <span className={styles.skillBadge}>Java</span>
                 </div>
-              </div>
+              </Tilt>
             </ScrollReveal>
 
-            <ScrollReveal delay={120}>
-              <div className={`${styles.skillCard} ${styles.skillCardEmber}`}>
+            <ScrollReveal delay={120} direction="zoom">
+              <Tilt className={`${styles.skillCard} ${styles.skillCardEmber}`} scale={1.03} maxRotation={6}>
                 <div className={styles.skillCardHeader}>
                   <span className={styles.skillIcon}>🛠️</span> Frameworks &amp; Libraries
                 </div>
@@ -145,11 +192,11 @@ export default function Home() {
                   <span className={styles.skillBadge}>Three.js</span>
                   <span className={styles.skillBadge}>GSAP</span>
                 </div>
-              </div>
+              </Tilt>
             </ScrollReveal>
 
-            <ScrollReveal delay={240}>
-              <div className={`${styles.skillCard} ${styles.skillCardBlue}`}>
+            <ScrollReveal delay={240} direction="zoom">
+              <Tilt className={`${styles.skillCard} ${styles.skillCardBlue}`} scale={1.03} maxRotation={6}>
                 <div className={styles.skillCardHeader}>
                   <span className={styles.skillIcon}>📊</span> Databases &amp; Analytics
                 </div>
@@ -161,7 +208,7 @@ export default function Home() {
                   <span className={styles.skillBadge}>Microsoft Excel</span>
                   <span className={styles.skillBadge}>DAX</span>
                 </div>
-              </div>
+              </Tilt>
             </ScrollReveal>
           </div>
         </div>
@@ -176,7 +223,11 @@ export default function Home() {
             <hr className={styles.sectionDivider} />
           </ScrollReveal>
           <ScrollReveal delay={150}>
-            <div className={styles.timeline}>
+            <div
+              ref={timelineRef}
+              className={styles.timeline}
+              style={{ "--timeline-progress": `${timelineProgress}%` } as React.CSSProperties}
+            >
               <div className={styles.timelineItem}>
                 <div className={styles.timelineNode} />
                 <div className={styles.timelineMeta}>
@@ -208,8 +259,8 @@ export default function Home() {
           </ScrollReveal>
 
           {/* Project 1 */}
-          <ScrollReveal delay={100}>
-            <div className={`${styles.projectRow} ${styles.projectRowEmber}`}>
+          <div className={`${styles.projectRow} ${styles.projectRowEmber}`}>
+            <ScrollReveal delay={100} direction="left">
               <div className={styles.projectInfo}>
                 <div className={styles.projectMeta}>
                   <span className={styles.projectTech}>Python</span>
@@ -227,15 +278,17 @@ export default function Home() {
                   <li>Engineered robust backend API controllers in Flask and linked directly with MongoDB database storage.</li>
                 </ul>
               </div>
-              <div className={styles.projectVisual}>
+            </ScrollReveal>
+            <ScrollReveal delay={200} direction="right">
+              <Tilt className={styles.projectVisual} scale={1.01} maxRotation={4}>
                 <StudentRegistrationWidget />
-              </div>
-            </div>
-          </ScrollReveal>
+              </Tilt>
+            </ScrollReveal>
+          </div>
 
           {/* Project 2 */}
-          <ScrollReveal delay={100}>
-            <div className={`${styles.projectRow} ${styles.projectRowBlue}`}>
+          <div className={`${styles.projectRow} ${styles.projectRowBlue}`}>
+            <ScrollReveal delay={100} direction="right">
               <div className={styles.projectInfo}>
                 <div className={styles.projectMeta}>
                   <span className={styles.projectTech}>Excel</span>
@@ -253,11 +306,13 @@ export default function Home() {
                   <li>Designed beautiful, intuitive KPI cards and bar visual layouts to track cohort distributions and success rates.</li>
                 </ul>
               </div>
-              <div className={styles.projectVisual}>
+            </ScrollReveal>
+            <ScrollReveal delay={200} direction="left">
+              <Tilt className={styles.projectVisual} scale={1.01} maxRotation={4}>
                 <AcademicPerformanceWidget />
-              </div>
-            </div>
-          </ScrollReveal>
+              </Tilt>
+            </ScrollReveal>
+          </div>
         </div>
 
         {/* ── Education & Certifications ── */}
@@ -271,43 +326,48 @@ export default function Home() {
           </ScrollReveal>
 
           <div className={styles.educationGrid}>
-            <ScrollReveal delay={0}>
-              <div className={styles.eduCard}>
+            <ScrollReveal delay={0} direction="zoom">
+              <Tilt className={styles.eduCard} scale={1.03} maxRotation={6}>
                 <span className={styles.eduYear}>2024 – 2026</span>
                 <h3 className={styles.eduDegree}>Master of Computer Applications (MCA)</h3>
                 <p className={styles.eduSchool}>MEASI Institute of Information Technology</p>
-              </div>
+              </Tilt>
             </ScrollReveal>
-            <ScrollReveal delay={150}>
-              <div className={styles.eduCard}>
+            <ScrollReveal delay={150} direction="zoom">
+              <Tilt className={styles.eduCard} scale={1.03} maxRotation={6}>
                 <span className={styles.eduYear}>2021 – 2024</span>
                 <h3 className={styles.eduDegree}>Bachelor of Computer Applications (BCA)</h3>
                 <p className={styles.eduSchool}>Merit Haji Ismail Saheb Arts and Science College</p>
-              </div>
+              </Tilt>
             </ScrollReveal>
           </div>
 
-          <ScrollReveal delay={200}>
+          <ScrollReveal delay={100} direction="up">
             <label className={styles.label} style={{ marginBottom: "1.25rem", display: "block" }}>
               COURSES &amp; VERIFICATIONS
             </label>
-            <div className={styles.certsGrid}>
-              <div className={styles.certCard}>
+          </ScrollReveal>
+
+          <div className={styles.certsGrid}>
+            <ScrollReveal delay={150} direction="zoom">
+              <Tilt className={styles.certCard} scale={1.04} maxRotation={8}>
                 <div className={styles.certBadge}>UI</div>
                 <div className={styles.certInfo}>
                   <h4 className={styles.certTitle}>UI/UX Design</h4>
                   <p className={styles.certOrg}>Futuro Focus</p>
                 </div>
-              </div>
-              <div className={styles.certCard}>
+              </Tilt>
+            </ScrollReveal>
+            <ScrollReveal delay={250} direction="zoom">
+              <Tilt className={styles.certCard} scale={1.04} maxRotation={8}>
                 <div className={styles.certBadge}>DA</div>
                 <div className={styles.certInfo}>
                   <h4 className={styles.certTitle}>Data Processing &amp; Business Analysis</h4>
                   <p className={styles.certOrg}>Anudip Foundation</p>
                 </div>
-              </div>
-            </div>
-          </ScrollReveal>
+              </Tilt>
+            </ScrollReveal>
+          </div>
         </div>
 
         {/* ── Contact Section ── */}
@@ -332,14 +392,14 @@ export default function Home() {
                 </a>
 
                 <a
-                  href="https://www.linkedin.com/in/sharib-ahmed"
+                  href="https://www.linkedin.com/in/sharib-ahmed-k-736398300"
                   target="_blank"
                   rel="noopener noreferrer"
                   className={styles.contactItem}
                 >
                   <div className={styles.contactIcon}>in</div>
                   <span className={styles.contactLabel}>LinkedIn</span>
-                  <span className={styles.contactValue}>Sharib Ahmed</span>
+                  <span className={styles.contactValue}>Sharib Ahmed K</span>
                 </a>
 
                 <a href="tel:+916374525580" className={styles.contactItem}>
@@ -351,7 +411,7 @@ export default function Home() {
                 <div className={styles.contactItem}>
                   <div className={styles.contactIcon}>📍</div>
                   <span className={styles.contactLabel}>Location</span>
-                  <span className={styles.contactValue}>Pernambut - 635810, TN</span>
+                  <span className={styles.contactValue}>Pernambut, Vellore, Tamil Nadu</span>
                 </div>
               </div>
             </div>
@@ -363,6 +423,9 @@ export default function Home() {
       <footer className={styles.footer}>
         © {new Date().getFullYear()} Sharib Ahmed K. Developed using <span>Next.js</span>, <span>Three.js</span> &amp; <span>GSAP</span>.
       </footer>
+
+      {/* Theme Customizer Switcher panel */}
+      <ThemeSwitcher activeTheme={activeTheme} onChangeTheme={handleThemeChange} />
     </main>
   );
 }

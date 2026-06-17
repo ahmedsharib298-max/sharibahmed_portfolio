@@ -1,0 +1,484 @@
+/* ==========================================================================
+   VideoIntro.module.css
+   Layout idea: the hero is a fixed full-viewport "set". A blurred duplicate
+   of the video fills the entire frame as ambient bloom; the sharp video sits
+   inside an inset "frame" with viewfinder-style corner brackets — a literal
+   nod to "cinematic" / camera framing. Content overlays the frame like a
+   film title card, lower-left.
+   ========================================================================== */
+
+.hero {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--bg-void);
+  z-index: 0;
+}
+
+/* Spacer placed in the page flow (see app/page.tsx) gives the document the
+   scroll height the fixed hero doesn't occupy on its own, so subsequent
+   sections scroll up and visually cover the pinned hero underneath. */
+
+/* ---- load-in curtain ----------------------------------------------------- */
+.curtain {
+  position: absolute;
+  inset: 0;
+  background: var(--bg-void);
+  z-index: 50;
+  pointer-events: none;
+}
+
+/* ---- background ambient (blurred duplicate) ------------------------------ */
+.bgVideoWrap {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.bgVideo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 130%;
+  height: 130%;
+  object-fit: cover;
+  transform: translate(-50%, -50%);
+  filter: blur(70px) saturate(1.5) brightness(0.55);
+  opacity: 0.9;
+}
+
+/* ---- foreground frame ----------------------------------------------------- */
+.frame {
+  position: absolute;
+  inset: var(--hero-inset);
+  border-radius: var(--radius-frame);
+  overflow: hidden;
+  z-index: 2;
+  box-shadow:
+    0 30px 90px -20px rgba(0, 0, 0, 0.65),
+    0 0 0 1px var(--glass-border);
+}
+
+.fgVideo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(1.08) contrast(1.04);
+}
+
+.frameGradient {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(11, 10, 9, 0.05) 0%,
+      rgba(11, 10, 9, 0.15) 38%,
+      rgba(11, 10, 9, 0.78) 78%,
+      rgba(11, 10, 9, 0.94) 100%
+    ),
+    linear-gradient(
+      90deg,
+      rgba(11, 10, 9, 0.55) 0%,
+      rgba(11, 10, 9, 0) 32%,
+      rgba(11, 10, 9, 0) 78%,
+      rgba(11, 10, 9, 0.35) 100%
+    );
+}
+
+/* ---- viewfinder corner brackets -------------------------------------------- */
+.bracket {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  opacity: 0.85;
+  filter: drop-shadow(0 0 6px rgba(255, 122, 60, 0.45));
+}
+
+.bracketTL {
+  top: 18px;
+  left: 18px;
+  border-top: 2px solid var(--ember);
+  border-left: 2px solid var(--ember);
+  border-radius: 6px 0 0 0;
+}
+
+.bracketTR {
+  top: 18px;
+  right: 18px;
+  border-top: 2px solid var(--ember);
+  border-right: 2px solid var(--ember);
+  border-radius: 0 6px 0 0;
+}
+
+.bracketBL {
+  bottom: 18px;
+  left: 18px;
+  border-bottom: 2px solid var(--monitor-blue);
+  border-left: 2px solid var(--monitor-blue);
+  border-radius: 0 0 0 6px;
+}
+
+.bracketBR {
+  bottom: 18px;
+  right: 18px;
+  border-bottom: 2px solid var(--monitor-blue);
+  border-right: 2px solid var(--monitor-blue);
+  border-radius: 0 0 6px 0;
+}
+
+@keyframes bracketPulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.bracket {
+  animation: bracketPulse 4.5s ease-in-out infinite;
+}
+
+/* ---- ambient vignette over everything -------------------------------------- */
+.ambientOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: radial-gradient(
+    120% 90% at 50% 110%,
+    rgba(11, 10, 9, 0.75) 0%,
+    rgba(11, 10, 9, 0) 55%
+  );
+}
+
+/* ---- HUD: rec dot + timecode ------------------------------------------------ */
+.hud {
+  position: absolute;
+  top: calc(var(--hero-inset) + 34px);
+  left: calc(var(--hero-inset) + 34px);
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--paper-dim);
+}
+
+.recDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ff4d4d;
+  box-shadow: 0 0 8px rgba(255, 77, 77, 0.8);
+  animation: recBlink 1.6s steps(2, jump-none) infinite;
+}
+
+@keyframes recBlink {
+  50% {
+    opacity: 0.25;
+  }
+}
+
+/* ---- content: eyebrow / name / subtitle -------------------------------------- */
+.content {
+  position: absolute;
+  z-index: 6;
+  left: calc(var(--hero-inset) + 34px);
+  right: calc(var(--hero-inset) + 34px);
+  bottom: calc(var(--hero-inset) + 56px);
+  max-width: 720px;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: clamp(0.7rem, 0.9vw, 0.82rem);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ember);
+  margin-bottom: clamp(10px, 2vw, 18px);
+}
+
+.name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  line-height: 0.92;
+  font-size: clamp(3.2rem, 10vw, 7.5rem);
+  letter-spacing: -0.01em;
+  color: var(--paper);
+  margin-bottom: clamp(14px, 2.4vw, 24px);
+}
+
+.nameLine {
+  display: block;
+  overflow: hidden;
+}
+
+.subtitle {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: clamp(0.95rem, 1.3vw, 1.15rem);
+  line-height: 1.55;
+  color: var(--paper-dim);
+  max-width: 480px;
+}
+
+/* ---- controls: play/pause + mute -------------------------------------------- */
+.controls {
+  position: absolute;
+  top: calc(var(--hero-inset) + 28px);
+  right: calc(var(--hero-inset) + 28px);
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.controlBtn {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(14px) saturate(1.4);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  color: var(--paper);
+  transition: border-color 0.25s ease, transform 0.25s ease,
+    background 0.25s ease;
+}
+
+.controlBtn:hover {
+  border-color: var(--glass-border-strong);
+  background: rgba(255, 122, 60, 0.16);
+  transform: translateY(-2px);
+}
+
+.controlBtn:focus-visible {
+  outline: 2px solid var(--monitor-blue);
+  outline-offset: 2px;
+}
+
+.controlBtn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ---- scroll indicator --------------------------------------------------- */
+.scrollIndicator {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.scrollLine {
+  position: relative;
+  width: 1px;
+  height: 44px;
+  background: var(--glass-border-strong);
+  overflow: hidden;
+}
+
+.scrollLine::after {
+  content: "";
+  position: absolute;
+  top: -100%;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    var(--ember) 50%,
+    transparent 100%
+  );
+  animation: scrollPulse 2.2s ease-in-out infinite;
+}
+
+@keyframes scrollPulse {
+  0% {
+    top: -100%;
+  }
+  100% {
+    top: 100%;
+  }
+}
+
+.scrollLabel {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--paper-dim);
+  transition: color 0.25s ease;
+}
+
+.scrollIndicator:hover .scrollLabel {
+  color: var(--paper);
+}
+
+/* ---- responsive ----------------------------------------------------------- */
+@media (max-width: 760px) {
+  .hero {
+    --hero-inset: 8px;
+  }
+
+  .content {
+    left: calc(var(--hero-inset) + 16px);
+    right: calc(var(--hero-inset) + 16px);
+    bottom: calc(var(--hero-inset) + 96px);
+  }
+
+  .hud {
+    top: calc(var(--hero-inset) + 16px);
+    left: calc(var(--hero-inset) + 16px);
+  }
+
+  .controls {
+    top: calc(var(--hero-inset) + 16px);
+    right: calc(var(--hero-inset) + 16px);
+  }
+
+  .controlBtn {
+    width: 38px;
+    height: 38px;
+  }
+
+  .name {
+    font-size: clamp(2.6rem, 14vw, 4.2rem);
+  }
+
+  .subtitle {
+    font-size: 0.92rem;
+    max-width: 100%;
+  }
+
+  .bracket {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* ---- "Click to Enter" splash overlay -------------------------------------- */
+.enterOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(
+    ellipse 80% 60% at 50% 50%,
+    rgba(11, 10, 9, 0.85) 0%,
+    rgba(11, 10, 9, 0.97) 100%
+  );
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.enterContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  position: relative;
+}
+
+.enterButton {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: rgba(255, 122, 60, 0.12);
+  border: 2px solid var(--ember);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 30px rgba(255, 122, 60, 0.15);
+}
+
+.enterOverlay:hover .enterButton {
+  background: rgba(255, 122, 60, 0.22);
+  transform: scale(1.08);
+  box-shadow: 0 0 50px rgba(255, 122, 60, 0.3);
+}
+
+.enterPlayIcon {
+  width: 32px;
+  height: 32px;
+  color: var(--ember);
+  margin-left: 4px; /* visual centering of play triangle */
+}
+
+.enterPulseRing {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 122, 60, 0.4);
+  animation: enterPulse 2.4s ease-out infinite;
+  z-index: 1;
+}
+
+@keyframes enterPulse {
+  0% {
+    width: 90px;
+    height: 90px;
+    opacity: 0.6;
+  }
+  100% {
+    width: 160px;
+    height: 160px;
+    opacity: 0;
+  }
+}
+
+.enterLabel {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--paper);
+  letter-spacing: 0.04em;
+  text-align: center;
+}
+
+.enterSubLabel {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--paper-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bracket,
+  .recDot,
+  .scrollLine::after,
+  .enterPulseRing {
+    animation: none !important;
+  }
+}

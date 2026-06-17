@@ -1,0 +1,332 @@
+.widgetContainer {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 500px;
+  margin: 1.5rem auto 0;
+  text-align: left;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  font-family: var(--font-body);
+}
+
+.widgetTitle {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--monitor-blue);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.widgetTitle::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background-color: var(--monitor-blue);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--monitor-blue);
+}
+
+.widgetTitle.emberTheme {
+  color: var(--ember);
+}
+
+.widgetTitle.emberTheme::before {
+  background-color: var(--ember);
+  box-shadow: 0 0 8px var(--ember);
+}
+
+/* OTP Widget Styles */
+.formGroup {
+  margin-bottom: 1rem;
+}
+
+.label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--paper-dim);
+  margin-bottom: 0.5rem;
+}
+
+.input {
+  width: 100%;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--glass-border);
+  border-radius: 6px;
+  color: var(--paper);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  transition: border-color 0.2s ease;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--ember);
+}
+
+.button {
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--ember);
+  color: var(--bg-void);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  border-radius: 6px;
+  border: none;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.button:hover:not(:disabled) {
+  background: #ff915c;
+  box-shadow: 0 0 15px rgba(255, 122, 60, 0.4);
+}
+
+.button:disabled {
+  background: var(--glass-border-strong);
+  color: var(--paper-dim);
+  cursor: not-allowed;
+}
+
+.otpInputContainer {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.otpCharInput {
+  flex: 1;
+  text-align: center;
+  font-size: 1.25rem;
+}
+
+.feedbackText {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.successText {
+  color: #5cf5a4;
+}
+
+.errorText {
+  color: #ff5c5c;
+}
+
+/* Dashboard Mockup Panel */
+.dashboardPanel {
+  animation: fadeIn 0.4s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dashHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.dashTitle {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  color: var(--paper);
+}
+
+.badge {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  padding: 0.2rem 0.5rem;
+  background: rgba(92, 245, 164, 0.15);
+  color: #5cf5a4;
+  border: 1px solid rgba(92, 245, 164, 0.3);
+  border-radius: 12px;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.statCard {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--glass-border);
+  padding: 0.75rem;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.statVal {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--ember);
+  margin-bottom: 0.25rem;
+}
+
+.statValBlue {
+  color: var(--monitor-blue);
+}
+
+.statLabel {
+  font-size: 0.65rem;
+  color: var(--paper-dim);
+  text-transform: uppercase;
+}
+
+.studentTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.studentTable th {
+  text-align: left;
+  color: var(--paper-dim);
+  font-family: var(--font-mono);
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.studentTable td {
+  padding: 0.5rem 0;
+  border-bottom: 1px dashed rgba(243, 239, 230, 0.08);
+}
+
+.studentTable tr:last-child td {
+  border-bottom: none;
+}
+
+.addStudentRow {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.addStudentInput {
+  flex: 1;
+  padding: 0.4rem 0.6rem;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--glass-border);
+  border-radius: 4px;
+  color: var(--paper);
+  font-size: 0.75rem;
+}
+
+.addStudentBtn {
+  padding: 0.4rem 0.8rem;
+  background: var(--ember);
+  color: var(--bg-void);
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-family: var(--font-mono);
+  font-weight: bold;
+}
+
+/* Analytics Widget Styles */
+.analyticsFilter {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.filterBtn {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  background: rgba(243, 239, 230, 0.05);
+  border: 1px solid var(--glass-border);
+  color: var(--paper-dim);
+  transition: all 0.2s ease;
+}
+
+.filterBtnActive {
+  background: rgba(79, 168, 224, 0.15);
+  border-color: var(--monitor-blue);
+  color: var(--monitor-blue);
+  box-shadow: 0 0 10px rgba(79, 168, 224, 0.2);
+}
+
+.chartSection {
+  margin-bottom: 1.25rem;
+}
+
+.chartContainer {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  padding: 1rem;
+  position: relative;
+}
+
+.svgText {
+  fill: var(--paper-dim);
+  font-size: 10px;
+  font-family: var(--font-mono);
+}
+
+.svgTitleText {
+  fill: var(--paper);
+  font-size: 11px;
+  font-family: var(--font-mono);
+  font-weight: bold;
+}
+
+.svgBar {
+  transition: height 0.5s ease, y 0.5s ease;
+  cursor: pointer;
+}
+
+.svgBar:hover {
+  fill: #73c2f0;
+}
+
+.dashboardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.65rem;
+  color: var(--paper-dim);
+  font-family: var(--font-mono);
+  border-top: 1px solid var(--glass-border);
+  padding-top: 0.75rem;
+  margin-top: 1rem;
+}
+
+.refreshBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--monitor-blue);
+}
+
+.refreshBtn svg {
+  width: 10px;
+  height: 10px;
+  transition: transform 0.4s ease;
+}
+
+.refreshBtn:hover svg {
+  transform: rotate(180deg);
+}

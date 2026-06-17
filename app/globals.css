@@ -1,0 +1,88 @@
+/* ==========================================================================
+   Fonts
+   - Unbounded   : display face, used only for the huge stacked name
+   - Inter       : body / subtitle copy
+   - JetBrains Mono : eyebrow, HUD timecode, scroll label — the "developer"
+                       accent that ties the typography back to code/terminals
+   ========================================================================== */
+@import url("https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap");
+
+/* ==========================================================================
+   Design tokens — the palette is the brief's "warm orange practical light +
+   soft monitor-blue glow" read literally as two opposing light sources
+   hitting a dark, near-black set.
+   ========================================================================== */
+:root {
+  /* color */
+  --bg-void: #0b0a09;          /* near-black, warm undertone — the "set" */
+  --ember: #ff7a3c;            /* warm orange practical light (primary) */
+  --ember-deep: #b8431d;       /* secondary warm, used in gradients */
+  --monitor-blue: #4fa8e0;     /* cool rim light, contrast accent */
+  --paper: #f3efe6;            /* warm-tinted off-white, primary text */
+  --paper-dim: rgba(243, 239, 230, 0.62);
+  --glass-bg: rgba(20, 17, 15, 0.45);
+  --glass-border: rgba(243, 239, 230, 0.14);
+  --glass-border-strong: rgba(243, 239, 230, 0.28);
+
+  /* type */
+  --font-display: "Unbounded", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* layout */
+  --hero-inset: clamp(12px, 2.4vw, 28px);
+  --radius-frame: clamp(14px, 1.6vw, 26px);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html,
+body {
+  background: var(--bg-void);
+  color: var(--paper);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+}
+
+::selection {
+  background: var(--ember);
+  color: var(--bg-void);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

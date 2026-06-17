@@ -1,0 +1,69 @@
+.cursorWrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.cursorDot {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--ember);
+  transform: translate(-50%, -50%);
+  left: var(--cursor-x, -100px);
+  top: var(--cursor-y, -100px);
+  pointer-events: none;
+  z-index: 10000;
+  box-shadow: 0 0 10px var(--ember);
+  transition: width 0.2s ease, height 0.2s ease, background-color 0.2s ease;
+}
+
+.cursorRing {
+  position: fixed;
+  width: 32px;
+  height: 32px;
+  border: 1.5px solid var(--ember);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  left: var(--cursor-x, -100px);
+  top: var(--cursor-y, -100px);
+  pointer-events: none;
+  z-index: 9999;
+  /* Smooth lagging follow effect using transitions on left and top */
+  transition: 
+    left 0.1s cubic-bezier(0.25, 1, 0.5, 1), 
+    top 0.1s cubic-bezier(0.25, 1, 0.5, 1), 
+    width 0.2s ease, 
+    height 0.2s ease, 
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+/* Hover States */
+.hovered .cursorDot {
+  width: 4px;
+  height: 4px;
+  background-color: var(--monitor-blue);
+  box-shadow: 0 0 8px var(--monitor-blue);
+}
+
+.hovered .cursorRing {
+  width: 52px;
+  height: 52px;
+  border-color: var(--monitor-blue);
+  background-color: rgba(79, 168, 224, 0.06);
+  box-shadow: 0 0 20px rgba(79, 168, 224, 0.2);
+}
+
+/* Hide on touch devices and mobile/tablet screens */
+@media (max-width: 1024px), (pointer: coarse) {
+  .cursorWrapper {
+    display: none;
+  }
+}

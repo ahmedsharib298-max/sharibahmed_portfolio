@@ -5,7 +5,7 @@ import VideoIntro from "../components/VideoIntro/VideoIntro";
 import ScrollReveal from "../components/ScrollReveal/ScrollReveal";
 import { StudentRegistrationWidget, AcademicPerformanceWidget } from "../components/ProjectWidget/ProjectWidget";
 import Tilt from "../components/Tilt/Tilt";
-import ThemeSwitcher, { ThemeType } from "../components/ThemeSwitcher/ThemeSwitcher";
+type ThemeType = "ember" | "cyber" | "plasma" | "void";
 import TerminalConsole from "../components/TerminalConsole/TerminalConsole";
 import styles from "./page.module.css";
 
@@ -33,6 +33,18 @@ export default function Home() {
   };
 
   useEffect(() => {
+    // Force scroll to top on page load/refresh
+    if ("scrollRestoration" in history) {
+      history.scrollRestoration = "manual";
+    }
+    window.scrollTo(0, 0);
+
+    // Set default theme variables on mount
+    const vals = themeValues["ember"];
+    Object.entries(vals).forEach(([key, val]) => {
+      document.documentElement.style.setProperty(key, val);
+    });
+
     const handleScroll = () => {
       const el = timelineRef.current;
       if (!el) return;
@@ -424,8 +436,7 @@ export default function Home() {
         © {new Date().getFullYear()} Sharib Ahmed K. Developed using <span>Next.js</span>, <span>Three.js</span> &amp; <span>GSAP</span>.
       </footer>
 
-      {/* Theme Customizer Switcher panel */}
-      <ThemeSwitcher activeTheme={activeTheme} onChangeTheme={handleThemeChange} />
+      {/* Theme Customizer is deprecated to keep layout clean */}
     </main>
   );
 }

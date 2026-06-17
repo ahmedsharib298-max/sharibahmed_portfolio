@@ -34,6 +34,25 @@ function PauseIcon() {
   );
 }
 
+function MuteIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M11 5L6 9H2v6h4l5 4V5z" fill="currentColor" />
+      <line x1="23" y1="9" x2="17" y2="15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <line x1="17" y1="9" x2="23" y2="15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function UnmuteIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M11 5L6 9H2v6h4l5 4V5z" fill="currentColor" />
+      <path d="M15.54 8.46a5 5 0 010 7.07" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path d="M19.07 4.93a10 10 0 010 14.14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
 
 function formatTimecode(seconds: number) {
   const mm = Math.floor(seconds / 60)
@@ -70,6 +89,7 @@ export default function VideoIntro({
 
   const [hasEntered, setHasEntered] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
   const [timecode, setTimecode] = useState("00:00:00:00");
 
   /** Keep the blurred background video locked to the foreground video. */
@@ -93,7 +113,12 @@ export default function VideoIntro({
     });
   }, [syncVideos]);
 
-
+  const toggleMute = useCallback(() => {
+    const fg = fgVideoRef.current;
+    if (!fg) return;
+    fg.muted = !fg.muted;
+    setIsMuted(fg.muted);
+  }, []);
 
   const scrollToNext = useCallback(() => {
     const target = document.getElementById(nextSectionId);
@@ -105,18 +130,25 @@ export default function VideoIntro({
     if (hasEntered) return;
     setHasEntered(true);
 
-    // Start video playback
+    // Start video playback WITH AUDIO (user has clicked, so browser allows it)
     const fg = fgVideoRef.current;
     const bg = bgVideoRef.current;
     if (fg) {
+      fg.muted = false; // Enable audio after user click
       fg.currentTime = 0;
-      fg.play().catch(() => {});
+      fg.play().catch(() => {
+        // Fallback: if unmuted play fails, try muted
+        fg.muted = true;
+        setIsMuted(true);
+        fg.play().catch(() => {});
+      });
     }
     if (bg) {
       bg.currentTime = 0;
       bg.play().catch(() => {});
     }
     setIsPlaying(true);
+    setIsMuted(false);
 
     // Animate: fade out the enter screen, then run GSAP entrance
     const ctx = gsap.context(() => {
@@ -168,8 +200,6 @@ export default function VideoIntro({
     return () => ctx.revert();
   }, [hasEntered]);
 
-
-
   /* ---- cinematic HUD timecode ------------------------------------------- */
   useEffect(() => {
     if (!hasEntered) return;
@@ -183,19 +213,7 @@ export default function VideoIntro({
     return () => cancelAnimationFrame(rafId);
   }, [hasEntered]);
 
-  /* ---- When video ends, mark as not playing ------------------------------ */
-  useEffect(() => {
-    const fg = fgVideoRef.current;
-    const bg = bgVideoRef.current;
-    if (!fg) return;
-    const handleEnded = () => {
-      setIsPlaying(false);
-      // Also pause bg
-      if (bg) bg.pause();
-    };
-    fg.addEventListener("ended", handleEnded);
-    return () => fg.removeEventListener("ended", handleEnded);
-  }, []);
+  /* ---- Video looping is handled by the native loop attribute ------------ */
 
   return (
     <section className={styles.hero} ref={heroRef} aria-label="Intro">
@@ -236,6 +254,7 @@ export default function VideoIntro({
           src={videoSrc}
           poster={posterSrc}
           playsInline
+          muted
           aria-label="Introduction video"
         />
         <div className={styles.frameGradient} />
@@ -272,6 +291,14 @@ export default function VideoIntro({
       </div>
 
       <div className={styles.controls} ref={controlsRef} style={{ opacity: hasEntered ? undefined : 0 }}>
+        <button
+          type="button"
+          className={styles.controlBtn}
+          onClick={toggleMute}
+          aria-label={isMuted ? "Unmute video" : "Mute video"}
+        >
+          {isMuted ? <MuteIcon /> : <UnmuteIcon />}
+        </button>
         <button
           type="button"
           className={styles.controlBtn}
